@@ -28,7 +28,37 @@ warblers_new <- warblers %>%
 ```
 
 ```{r}
-## create an exploratory ggplot of wing length vs. bird mass with point color indicating sex and faceted by bird age at capture
+## create an exploratory ggplot of wing length vs. bird mass among different age groups with point color indicating sex and faceted by bird age at capture
+ggplot(data = warblers_new, 
+       aes(x = mass, y = wing_r)) + 
+  geom_point(size = 2, aes(color = sex)) + 
+  theme_bw() +
+  facet_wrap(~ age_banded) + 
+  labs(x = "Mass (grams)",
+      y = "Right Wing Length (mm)", # FIXED
+       title = "Relationship Between Black Throated Blue Warbler Wing Length and Mass Across Age Groups") 
 
+```
+```{r}
+## create an exploratory ggplot of wing length vs. bird mass at different elevation levels with point color indicating sex and faceted by elevation of the sample plot
+ggplot(data = warblers_new, 
+       aes(x = mass, y = wing_r)) + 
+  geom_point(size = 2, aes(color = sex)) + 
+  theme_bw() +
+  facet_wrap(~ elevation) + 
+  labs(x = "Mass (grams)",
+      y = "Right Wing Length (mm)", # FIXED
+       title = "Relationship Between Black Throated Blue Warbler Wing Length and Mass Across Age Groups") 
+```
+```{r}
+## create an exploratory ggplot of bill depth vs. bill culmen among different age groups with point color indicating sex and faceted by elevation of the sample plot
+ggplot(data = warblers_new, 
+       aes(x = bill_culmen, y = bill_depth)) + 
+  geom_point(size = 2, aes(color = sex)) + 
+  theme_bw() +
+  facet_wrap(~ age_banded) + 
+  labs(x = "Culmen Length (mm)",
+      y = "Bill Depth (mm)", # FIXED
+       title = "Relationship Between Black Throated Blue Warbler Culmen Length and Bill Depth Across Age Groups") 
 ```
 
