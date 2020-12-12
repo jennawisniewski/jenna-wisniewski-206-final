@@ -61,4 +61,43 @@ ggplot(data = warblers_new,
       y = "Bill Depth (mm)", # FIXED
        title = "Relationship Between Black Throated Blue Warbler Culmen Length and Bill Depth Across Age Groups") 
 ```
+```{r}
+## Create a multiple linear regression model that describes the relationship between bird mass and wing length
+
+##start by exploring the relationship between all variables using pair plots in GGally
+warblers_new %>% 
+  select(sex, bill_depth:wing_r) %>% 
+  ggpairs (aes(color =sex))
+
+
+
+```
+```{r}
+## create multiple linear regression models in order to determine which variables yield the best fit 
+
+lm1 <- lm(mass ~ wing_r +sex, data = warblers_new)
+
+lm2 <- lm(mass ~ wing_r +sex +elevation, data = warblers_new)
+
+lm3 <- lm(mass ~ wing_r +sex +elevation +age_banded, data = warblers_new)
+
+lm4 <- lm(mass ~ wing_r +sex +elevation +age_banded + bill_depth, data = warblers_new)
+
+lm5 <- lm(mass ~ wing_r +sex +elevation +age_banded + bill_depth + tarsus1, data = warblers_new)
+
+lm6 <- lm(mass ~ wing_r +elevation +age_banded + bill_depth + tarsus1, data = warblers_new)
+
+## Find the AIC for each model to compare and choose the lowest
+AIC(lm1)
+AIC(lm2)
+AIC(lm3)
+AIC(lm4)
+AIC(lm5) ##lowest value 
+AIC(lm6)
+
+```
+
+```{r, results = 'asis'}
+stargazer(lm5, type = "html")
+```
 
