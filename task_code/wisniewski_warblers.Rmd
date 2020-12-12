@@ -87,17 +87,25 @@ lm5 <- lm(mass ~ wing_r +sex +elevation +age_banded + bill_depth + tarsus1, data
 
 lm6 <- lm(mass ~ wing_r +elevation +age_banded + bill_depth + tarsus1, data = warblers_new)
 
+lm7 <- lm(mass ~ wing_r +sex +age_banded + bill_depth + tarsus1, data = warblers_new)
+
+lm8 <- lm(mass ~ wing_r +sex + bill_depth + tarsus1, data = warblers_new)
+
+lm9 <- lm(mass ~ wing_r +sex + elevation +bill_depth + tarsus1, data = warblers_new)
+
 ## Find the AIC for each model to compare and choose the lowest
 AIC(lm1)
 AIC(lm2)
 AIC(lm3)
 AIC(lm4)
-AIC(lm5) ##lowest value 
-AIC(lm6)
-
+AIC(lm5) 
+AIC(lm7)
+AIC(lm8)
+AIC(lm9) ## lowest value
 ```
 
 ```{r, results = 'asis'}
-stargazer(lm5, type = "html")
+## use stargazer to show the multiple linear regression coefficients for ln9
+stargazer(lm9, type = "html")
 ```
 

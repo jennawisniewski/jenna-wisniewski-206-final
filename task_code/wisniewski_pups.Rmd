@@ -1,0 +1,54 @@
+---
+title: "Changing Stellar Sea Lion Pup Populations in Alaska Rookeries"
+author: "Jenna Wisniewski"
+date: "12/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(GGally)
+library(stargazer)
+library(broom)
+library(kableExtra)
+library(naniar)
+```
+
+```{r}
+## read in the data
+steller_data <- read_csv(here("exam_data","steller_pups.csv"))
+
+```
+
+```{r}
+## wrangle the data so that the mean value of counts is displayed by site and year
+new_steller <- steller_data %>% 
+  group_by(sitename, Year) %>% 
+  summarize(mean_pup_count = mean(pupcount))
+
+```
+
+```{r}
+## Create a new data frame that: 1. takes the summarized data from above and only keeps observations from sites Sugarloaf, Marmot, Forrester Complex, Chowiet, and Hazy 2. Only keeps the columns containing the site name, year, and pup count (this was already done from the previous code) 3. renames the column containing pup counts to steller_pups 
+
+steller_counts <- new_steller %>% 
+  filter (sitename %in% c("Sugarloaf","Marmot","Forrester Complex","Chowiet", "Hazy")) %>%
+  rename(steller_pups = mean_pup_count)
+```
+
+```{r}
+## Create a ggplot that visualizes Steller pup population estimates over time for the five sites 
+##start with a line graph
+ggplot(data = steller_counts, aes(x=Year, y = steller_pups)) +
+  geom_col()+
+##use facet wrap to show the counts by each site
+  facet_wrap(~ sitename)+
+##add axis labels and graph titles
+  labs(x = "Year", y = "Mean Count of Sea Lion Pups", title = "Mean Count of Sea Lion Pups Per Alaskan Rookerie Site")+
+  ##create a background color for the graph on the axis
+  theme(plot.background = element_rect(fill = "lightcyan3"))
+```
+
