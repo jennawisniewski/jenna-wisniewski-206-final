@@ -108,4 +108,13 @@ AIC(lm9) ## lowest value
 ## use stargazer to show the multiple linear regression coefficients for ln9
 stargazer(lm9, type = "html")
 ```
+The variables that I choose to use for this regression model were wing length,sex, elevation, bill depth and tarsus length. 
+
+-If all other variables remain the same except for the selected variable
+-For every 1 mm increase in wing length there would be a 0.068 gram increase in mass
+-Males would weigh on average 1.022 grams less than female
+-A warbler at a low elevation would weigh 0.158 grams less on average than a warbler at high elevation.
+-A warbler at a mid elevation would weigh 0.132 grams less on average than a warbler at high elevation.
+-For every 1 mm increase in bill depth there would be a 0.176 gram increase in mass
+-For every 1 mm increase in tarsus length there would be a 0.081 gram increase in mass
 
