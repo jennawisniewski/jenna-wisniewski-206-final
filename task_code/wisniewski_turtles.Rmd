@@ -24,7 +24,7 @@ library(effsize)
 ## read in the data
 turtles_data <- read_csv(here("exam_data","sharkbay_sea_turtles.csv"))
 ```
-#### **1. Explore the relationship between carapace length and width for green and loggerhead turtles**
+#### **1. Explore the relationship between carapace length and carapace width for green and loggerhead turtles**
 
 
 ##### **Data Visualization**

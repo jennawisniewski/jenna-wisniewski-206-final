@@ -1,5 +1,5 @@
 ---
-title: "Changing Steller Sea Lion Pup Populations in Alaska Rookeries"
+title: "Changing Steller Sea Lion Pup Populations in Alaska Rookeries Observed by Aerial Imaging and Sight Count (1961-2015)"
 author: "Jenna Wisniewski"
 date: "12/11/2020"
 output: html_document

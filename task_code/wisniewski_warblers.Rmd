@@ -29,7 +29,7 @@ warblers_new <- warblers %>%
 
 ```
 ##### **Exploratory Graphs**
-```{r}
+```{r, fig.align = "center"}
 ## create an exploratory ggplot of wing length vs. bird mass among different age groups with point color indicating sex and faceted by bird age at capture
 ggplot(data = warblers_new, 
        aes(x = mass, y = wing_r)) + 
@@ -41,7 +41,7 @@ ggplot(data = warblers_new,
        title = "Warbler Wing Length vs. Mass Across Age Groups") 
 
 ```
-```{r}
+```{r, fig.align = "center"}
 ## create an exploratory ggplot of wing length vs. bird mass at different elevation levels with point color indicating sex and faceted by elevation of the sample plot
 ggplot(data = warblers_new, 
        aes(x = mass, y = wing_r)) + 
@@ -52,7 +52,7 @@ ggplot(data = warblers_new,
       y = "Right Wing Length (mm)", # FIXED
        title = " Warbler Wing Length vs. Mass Across Elevation") 
 ```
-```{r}
+```{r, fig.align = "center"}
 ## create an exploratory ggplot of bill depth vs. bill culmen among different age groups with point color indicating sex and faceted by elevation of the sample plot
 ggplot(data = warblers_new, 
        aes(x = bill_culmen, y = bill_depth)) + 
@@ -123,7 +123,7 @@ stargazer(lm8, type = "html")
 ```
 ##### **Analysis** 
 
-The variables that I choose to use for this regression model were wing length, sex, bill depth and tarsus length (lm8). While looking at the ggpairs plots, all of these variables appeared to have relationships that predicted bird mass. Additionally, all of these variables lowered the AIC value which shows how well the model predicts the data. While elevation also lowered the AIC value, it lowered it a very small amount and when it was examined in the exploratory plots it did not appear to be a strong predictor of bird mass. Additionally, the lowering of the AIC value such a small amount was not worth the additional complexity that this variable added to the model. Banding age was not included either as the exploratory plots did not show it as a strong predictor of mass and it raised the AIC value. I did not choose bill_culmen as I had already choosen bill_depth and felt that they both would have represented bill size(their distribution on the exploratory plots was also extremely similar)and have the same prediction of mass. 
+The variables that I choose to use for this regression model were wing length, sex, bill depth and tarsus length (lm8). While looking at the ggpairs plots, all of these variables appeared to have relationships that predicted bird mass. Additionally, all of these variables lowered the AIC value which shows how well the model predicts the data. While elevation also lowered the AIC value, it lowered it a very small amount and when it was examined in the exploratory plots it did not appear to be a strong predictor of bird mass. Additionally, the lowering of the AIC value such a small amount was not worth the additional complexity that this variable added to the model. Banding age was not included either as the exploratory plots did not show it as a strong predictor of mass and it raised the AIC value. I did not choose bill_culmen as I had already choosen bill_depth and felt that they both would have represented bill size(their distribution on the exploratory plots was also extremely similar)and drive the same prediction of mass. 
 
 -If all other variables remain the same except for the selected variable:
 
