@@ -51,4 +51,6 @@ ggplot(data = steller_counts, aes(x=Year, y = steller_pups)) +
   ##create a background color for the graph on the axis
   theme(plot.background = element_rect(fill = "lightcyan3"))
 ```
+**Figure 1.** Mean count of Sea Lion pups across five different Alaskan Rookeries (1967-2020).
 
+Main trends from this data are that the Choweit, Marmot and Sugarloaf counts started off high (~5000-6000)and then had a sharp drop in counts around the year blank and then slowly declined until the least three years where counts have increased slightly. The Forrester Complex maintained a relatively steady count from years    until counts went to 0 in 2002 . In 1979 the Hazy Rookerie counts began and have generally increased slightly over time. 
