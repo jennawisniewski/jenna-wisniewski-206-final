@@ -7,24 +7,93 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(GGally)
+library(stargazer)
+library(broom)
+library(kableExtra)
+library(naniar)
+library(effsize)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+## read in the data
+turtles_data <- read_csv(here("exam_data","sharkbay_sea_turtles.csv"))
 ```
 
-## Including Plots
+```{r}
+##1. Explore the relationship between carapace length and width for green and loggerhead turtles. Need to write why it meets assumptions
 
-You can also embed plots, for example:
+## create an exploratory data visualization showing the relationship between carapace length and width 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+ggplot(data = turtles_data, aes(x=length, y = width)) +
+  geom_point()+
+  labs(x = "Carapace Length(cm)", y = "Carapace Width (cm)", title = "Relationship Between Carapace Length and Width in Green and Loggerhead Turtles")
+
+```
+```{r}
+## Do linear regression do get the R-squared value
+turtles_lm <- lm(length ~ width, data = turtles_data)
+
+## check diagnostic plot to check assumptions
+plot(turtles_lm)
+## Data looks like it meets assumption, however might possibly violate linearity and could have outliers that are affecting the data.
+
+# Get tidy versions of the model output to call later on in text
+turtles_lm_tidy <- tidy(turtles_lm)
+
+turtles_lm_glance <- glance(turtles_lm)
+```
+ Simple linear regression revealed that carapace length strongly predicts carapace width in green and loggerhead turtles, with 93% of the variance in carapace width accounted for by carapace length p < 0.005, R^2^ = `r round(turtles_lm_glance$r.squared,2)`) with an average slope of $\beta$ = `r round(turtles_lm_tidy$estimate[2], 2)` g mm^-1^ (i.e., for each one centimeter increase in carapce length we expect an average increase in carapce width of `r round(turtles_lm_tidy$estimate[2], 2)` g). Diagnostic plots (not included) reveal normally distributed and homoscedastic residuals. 
+
+```{r}
+##2. Compare the carapace lengths between green and loggerhead turtles. 
+
+## create a new data set that just contains species and carapace length.
+
+turtles_length <- turtles_data %>% 
+  select("species", "length")
+
+## Create vectos to make exploratory plots
+
+loggerhead_l <- turtles_length %>% 
+  filter(species == "loggerhead") %>% 
+  pull(length)
+
+green_l <- turtles_length %>% 
+  filter(species == "green") %>% 
+  pull(length)
+
+## Create exploratory plots to explore the distribution of carapace lengths for green and loggerhead turtles 
+
+##Plot data in exploratory graph 
+hist(loggerhead_l) ## Looks relatively normal possibly a bit skewed right
+qqnorm(loggerhead_l) ## looks very linear
+hist(green_l) ## Looks very normal 
+qqnorm(green_l)## Looks relatively linear, possibly a bit skewed
+
+##Overall: assumptions of normality hold, & sample size additionally >> Central Limit Theorem (means will be normally distributed). Two-sample t-test is okay for means comparison and will be used
+
+```
+```{r}
+##Use two sided t.test to compare the mean carapace lengths of loggerhead and green turtles
+turtles_ttest <- t.test(x = loggerhead_l, y = green_l)
+
+turtles_ttest_tidy <- tidy(turtles_ttest)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+ # Get the means & SDs for each: 
+loggerhead_mean <- mean(loggerhead_l,  na.rm = T)
+green_mean <- mean(green_l)
+loggerhead_sd <- sd(loggerhead_l, na.rm = T)
+green_sd <- sd(green_l)
+```
+
+```{r}
+## Completing a cohen.d test to examine the difference between the variance of points
+turtles_effsize <- cohen.d(loggerhead_l, green_l, na.rm = T)
+```
+On average, green turtles have a longer carapace than loggerhead turtles. (`r round(green_mean,2)` $\pm$ `r round(green_sd, 2)` and `r round(loggerhead_mean,2)` $\pm$ `r round(loggerhead_sd, 2)` cm, respectively; mean $\pm$ 1 standard deviation). While the absolute difference in means is `r round(green_mean, 2) - round(loggerhead_mean, 2)` cm (a `r round((green_mean - loggerhead_mean)/((green_mean + loggerhead_mean)/2)*100, 2)`% difference), the difference in means is not significant (Welch's two-sample t-test: t(`r round(turtles_ttest_tidy$parameter,2)`) = `r round(turtles_ttest_tidy$statistic,2)`,  p = (`r format(turtles_ttest_tidy$p.value, scientific = TRUE, digits = 3)`) , p is not < 0.05), and the effect size is small (Cohen's *d* = `r round(turtles_effsize$estimate,2)`).
