@@ -1,5 +1,5 @@
 ---
-title: "Changing Stellar Sea Lion Pup Populations in Alaska Rookeries"
+title: "Changing Steller Sea Lion Pup Populations in Alaska Rookeries"
 author: "Jenna Wisniewski"
 date: "12/11/2020"
 output: html_document
@@ -41,24 +41,26 @@ steller_counts <- new_steller %>%
   rename(steller_pups = mean_pup_count)
 ```
 
-#### Sea Lion Pup Count Visualization
-```{r}
+##### **Sea Lion Pup Count Visualization**
+```{r, fig.align = "center"}
 ## Create a ggplot that visualizes Steller pup population estimates over time for the five sites 
 ##start with a line graph
 ggplot(data = steller_counts, aes(x=Year, y = steller_pups)) +
-  geom_line()+
+  geom_line(aes(color = sitename),show.legend = FALSE)+
 ##use facet wrap to show the counts by each site
   facet_wrap(~ sitename)+
 ##add axis labels and graph titles
-  labs(x = "Year", y = "Mean Count of Sea Lion Pups", title = "Mean Count of Sea Lion Pups Per Alaskan Rookerie Site")+
+  labs(x = "Year", y = "Mean Number of Pups", title = "Mean Population Count of Steller Sea Lion Pups Per 
+       Alaskan Rookerie Site (1961-2015)")+
 ##create a background color for the graph on the axis
   theme(plot.background = element_rect(fill = "lightcyan3"))
 ```
 
 
-**Figure 1.** Mean count of Sea Lion pups across five different Alaskan Rookeries (1967-2020).
+**Figure 1.** Mean population count of Steller Sea Lion pups across five different Alaskan Rookeries (1961-2015) conducted by sight and aerial imaging during June and July. The Forrester Complex Rookerie recorded a 0 value for 2002 and then no further counts were recorded. Data: Fritz(2015)
 
-#### Data Trends
-Main trends from this data are that the Choweit, Marmot and Sugarloaf counts started off high (~5000-6000)and then had a sharp drop in counts around the year 1980 and then slowly declined until the least three years where counts have increased slightly. The Forrester Complex maintained a relatively steady count from years    until counts went to 0 in 2002 and then no further counts were recorded. In 1979 the Hazy Rookerie counts began and have generally increased slightly over time. 
+##### **Data Trends**
+Main trends from this data are that the Choweit, Marmot and Sugarloaf counts started off high (~5000-6000)and then all had a sharp drop in counts around the year 1980 to 1990, after which the population slowly declined until the least three years where counts have increased slightly. The Forrester Complex maintained a relatively steady count from years 1961-1998 until counts dropped to 0 in 2002 and then no further counts were recorded for that rookerie. In 1979 the Hazy Rookerie counts began and have generally increased slowly over time. 
 
-#### Citation 
+##### **Citation** 
+Fritz, Lowell; Sweeney, Kathryn; Lynn, Morgan; Gelatt, Thomas; Gilpatrick, James; Towell, Rodney (2015). Counts of Alaska Steller sea lion pups conducted on rookeries in Alaska from 1961-06-22 to 2015-07-18 (NCEI Accession 0128189). NOAA National Centers for Environmental Information. Dataset. https://doi.org/10.7289/v5862ddr. Accessed 2020-12-04.
