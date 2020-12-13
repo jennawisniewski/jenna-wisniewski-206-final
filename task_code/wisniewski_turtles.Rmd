@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(janitor)
 library(here)
@@ -19,13 +19,16 @@ library(effsize)
 ```
 
 ```{r}
+## Data Organization
+
 ## read in the data
 turtles_data <- read_csv(here("exam_data","sharkbay_sea_turtles.csv"))
 ```
+#### **1. Explore the relationship between carapace length and width for green and loggerhead turtles**
 
+
+##### **Data Vizualization**
 ```{r}
-##1. Explore the relationship between carapace length and width for green and loggerhead turtles. Need to write why it meets assumptions
-
 ## create an exploratory data visualization showing the relationship between carapace length and width 
 
 ggplot(data = turtles_data, aes(x=length, y = width)) +
@@ -33,7 +36,11 @@ ggplot(data = turtles_data, aes(x=length, y = width)) +
   labs(x = "Carapace Length(cm)", y = "Carapace Width (cm)", title = "Relationship Between Carapace Length and Width in Green and Loggerhead Turtles")
 
 ```
-```{r}
+
+
+##### **Analysis**
+
+```{r, include=FALSE}
 ## Do linear regression do get the R-squared value
 turtles_lm <- lm(length ~ width, data = turtles_data)
 
@@ -46,17 +53,19 @@ turtles_lm_tidy <- tidy(turtles_lm)
 
 turtles_lm_glance <- glance(turtles_lm)
 ```
- Simple linear regression revealed that carapace length strongly predicts carapace width in green and loggerhead turtles, with 93% of the variance in carapace width accounted for by carapace length p < 0.005, R^2^ = `r round(turtles_lm_glance$r.squared,2)`) with an average slope of $\beta$ = `r round(turtles_lm_tidy$estimate[2], 2)` g mm^-1^ (i.e., for each one centimeter increase in carapce length we expect an average increase in carapce width of `r round(turtles_lm_tidy$estimate[2], 2)` g). Diagnostic plots (not included) reveal normally distributed and homoscedastic residuals. 
 
+ Simple linear regression revealed that carapace length strongly predicts carapace width in green and loggerhead turtles, with 93% of the variance in carapace width accounted for by carapace length p < 0.005, R^2^ = `r round(turtles_lm_glance$r.squared,2)`) with an average slope of $\beta$ = `r round(turtles_lm_tidy$estimate[2], 2)` cm (i.e., for each one centimeter increase in carapce length we expect an average increase in carapce width of `r round(turtles_lm_tidy$estimate[2], 2)` cm). Diagnostic plots (not included) reveal normally distributed and homoscedastic residuals. 
+
+#### **2. Compare the carapace lengths between green and loggerhead turtles**
 ```{r}
-##2. Compare the carapace lengths between green and loggerhead turtles. 
+## Data Organization
 
 ## create a new data set that just contains species and carapace length.
 
 turtles_length <- turtles_data %>% 
   select("species", "length")
 
-## Create vectos to make exploratory plots
+## Create vectors to make exploratory plots
 
 loggerhead_l <- turtles_length %>% 
   filter(species == "loggerhead") %>% 
@@ -66,6 +75,9 @@ green_l <- turtles_length %>%
   filter(species == "green") %>% 
   pull(length)
 
+```
+##### **Data Visualization: Exploratory Plots**
+```{r}
 ## Create exploratory plots to explore the distribution of carapace lengths for green and loggerhead turtles 
 
 ##Plot data in exploratory graph 
@@ -75,16 +87,21 @@ hist(green_l) ## Looks very normal
 qqnorm(green_l)## Looks relatively linear, possibly a bit skewed
 
 ##Overall: assumptions of normality hold, & sample size additionally >> Central Limit Theorem (means will be normally distributed). Two-sample t-test is okay for means comparison and will be used
-
 ```
-```{r}
+
+##### **Analysis**
+
+To compare the lengths statistically, I choose a two sample t test. This is because
+
+
+```{r, include=FALSE}
 ##Use two sided t.test to compare the mean carapace lengths of loggerhead and green turtles
 turtles_ttest <- t.test(x = loggerhead_l, y = green_l)
 
 turtles_ttest_tidy <- tidy(turtles_ttest)
 ```
 
-```{r}
+```{r, include=FALSE}
  # Get the means & SDs for each: 
 loggerhead_mean <- mean(loggerhead_l,  na.rm = T)
 green_mean <- mean(green_l)
@@ -92,14 +109,16 @@ loggerhead_sd <- sd(loggerhead_l, na.rm = T)
 green_sd <- sd(green_l)
 ```
 
-```{r}
+```{r, include=FALSE}
 ## Completing a cohen.d test to examine the difference between the variance of points
 turtles_effsize <- cohen.d(loggerhead_l, green_l, na.rm = T)
 ```
 On average, green turtles have a longer carapace than loggerhead turtles. (`r round(green_mean,2)` $\pm$ `r round(green_sd, 2)` and `r round(loggerhead_mean,2)` $\pm$ `r round(loggerhead_sd, 2)` cm, respectively; mean $\pm$ 1 standard deviation). While the absolute difference in means is `r round(green_mean, 2) - round(loggerhead_mean, 2)` cm (a `r round((green_mean - loggerhead_mean)/((green_mean + loggerhead_mean)/2)*100, 2)`% difference), the difference in means is not significant (Welch's two-sample t-test: t(`r round(turtles_ttest_tidy$parameter,2)`) = `r round(turtles_ttest_tidy$statistic,2)`,  p = (`r format(turtles_ttest_tidy$p.value, scientific = TRUE, digits = 3)`) , p is not < 0.05), and the effect size is small (Cohen's *d* = `r round(turtles_effsize$estimate,2)`).
 
+
+#### **3. Comparing the Occurrence of burrowing barnacles on green vs. loggerhead turtles**
 ```{r}
-##3. Comparing the Occurence of burrowing barnacles on green vs. loggerhead turtles
+#### Data Organization
 
 ##Create a subset of data that only selects species and burr (presence of barnacles) 
 
@@ -113,6 +132,9 @@ turtles_b <- turtles_data %>%
         
 ```
 
+##### **Data Visualization**
+
+
 **Table 1.** Counts of green and loggerhead turtles that are observed with the presence of burrowing barnacles in Shark Bay Australia during at-sea surveys. Data: Heithaus (2019)
 ```{r}
 ##creating a table that shows the counts from each response in correlation to the identified political affiliation 
@@ -122,14 +144,16 @@ turtles_counts <- turtles_b %>%
 turtles_table <- turtles_counts %>% 
   adorn_percentages() %>% 
    janitor::adorn_pct_formatting(digits = 2) %>% 
-  adorn_ns() %>% 
-  kable() %>%
+  adorn_ns() 
+
+ turtles_table %>% 
+   kable() %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)##finalize the graph format 
 
-turtles_table
-
 ```
-```{r}
+##### **Analysis**
+
+```{r, include=FALSE}
 ##converting count table into contingency table so that I can perform a chi square test
 
 turtles_ct <- turtles_counts %>% 
@@ -146,7 +170,5 @@ turtlesx2_tidy <- tidy(turtles_x2)
 turtlesx2_tidy
 ```
 
-#### **Results**
- The chi squared value from the two species of `r round(turtlesx2_tidy$statistic,1)` and a p value of `r format(turtlesx2_tidy$p.value, scientific = TRUE, digits = 3)`, p < 0.05 is sufficient evidence to reject the null hypothesis of independence between turtle species and presence of burrowing barnacle, showing that the variables are dependent on each other and turtle species will effect whether burrowing barnacle is observed an a trapped individual. 
-
+The percentage and count of green turtles with observed burrowing barnacles was `r turtles_table[1,2]`, the percentage and count of loggerhead turtles with observed burrowing barnacles was `r turtles_table [2,2]`.  The chi squared value from the two species of `r round(turtlesx2_tidy$statistic,1)` and a p value of `r format(turtlesx2_tidy$p.value, scientific = TRUE, digits = 3)`, p < 0.05 is sufficient evidence to reject the null hypothesis of independence between turtle species and presence of burrowing barnacle, showing that the variables are dependent on each other and turtle species will effect whether burrowing barnacle is observed an a trapped individual. 
 

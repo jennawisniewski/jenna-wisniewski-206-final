@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(janitor)
 library(here)
@@ -18,6 +18,8 @@ library(naniar)
 ```
 
 ```{r}
+## Data Organization
+
 ## read in the data
 steller_data <- read_csv(here("exam_data","steller_pups.csv"))
 
@@ -39,18 +41,24 @@ steller_counts <- new_steller %>%
   rename(steller_pups = mean_pup_count)
 ```
 
+#### Sea Lion Pup Count Visualization
 ```{r}
 ## Create a ggplot that visualizes Steller pup population estimates over time for the five sites 
 ##start with a line graph
 ggplot(data = steller_counts, aes(x=Year, y = steller_pups)) +
-  geom_col()+
+  geom_line()+
 ##use facet wrap to show the counts by each site
   facet_wrap(~ sitename)+
 ##add axis labels and graph titles
   labs(x = "Year", y = "Mean Count of Sea Lion Pups", title = "Mean Count of Sea Lion Pups Per Alaskan Rookerie Site")+
-  ##create a background color for the graph on the axis
+##create a background color for the graph on the axis
   theme(plot.background = element_rect(fill = "lightcyan3"))
 ```
+
+
 **Figure 1.** Mean count of Sea Lion pups across five different Alaskan Rookeries (1967-2020).
 
-Main trends from this data are that the Choweit, Marmot and Sugarloaf counts started off high (~5000-6000)and then had a sharp drop in counts around the year blank and then slowly declined until the least three years where counts have increased slightly. The Forrester Complex maintained a relatively steady count from years    until counts went to 0 in 2002 . In 1979 the Hazy Rookerie counts began and have generally increased slightly over time. 
+#### Data Trends
+Main trends from this data are that the Choweit, Marmot and Sugarloaf counts started off high (~5000-6000)and then had a sharp drop in counts around the year 1980 and then slowly declined until the least three years where counts have increased slightly. The Forrester Complex maintained a relatively steady count from years    until counts went to 0 in 2002 and then no further counts were recorded. In 1979 the Hazy Rookerie counts began and have generally increased slightly over time. 
+
+#### Citation 
