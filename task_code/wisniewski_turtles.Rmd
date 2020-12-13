@@ -97,3 +97,56 @@ green_sd <- sd(green_l)
 turtles_effsize <- cohen.d(loggerhead_l, green_l, na.rm = T)
 ```
 On average, green turtles have a longer carapace than loggerhead turtles. (`r round(green_mean,2)` $\pm$ `r round(green_sd, 2)` and `r round(loggerhead_mean,2)` $\pm$ `r round(loggerhead_sd, 2)` cm, respectively; mean $\pm$ 1 standard deviation). While the absolute difference in means is `r round(green_mean, 2) - round(loggerhead_mean, 2)` cm (a `r round((green_mean - loggerhead_mean)/((green_mean + loggerhead_mean)/2)*100, 2)`% difference), the difference in means is not significant (Welch's two-sample t-test: t(`r round(turtles_ttest_tidy$parameter,2)`) = `r round(turtles_ttest_tidy$statistic,2)`,  p = (`r format(turtles_ttest_tidy$p.value, scientific = TRUE, digits = 3)`) , p is not < 0.05), and the effect size is small (Cohen's *d* = `r round(turtles_effsize$estimate,2)`).
+
+```{r}
+##3. Comparing the Occurence of burrowing barnacles on green vs. loggerhead turtles
+
+##Create a subset of data that only selects species and burr (presence of barnacles) 
+
+turtles_b <- turtles_data %>% 
+  select(species, burr) %>% 
+## change the yes and no responses to "with burrowing barnacles observed" and "without burrowing branacles observed"
+ mutate(burr = case_when(
+ burr == "yes" ~ "Burrowing Barnacles Observed",
+ burr == "no" ~ "Burrowing Barnacles Not Observed")) 
+
+        
+```
+
+**Table 1.** Counts of green and loggerhead turtles that are observed with the presence of burrowing barnacles in Shark Bay Australia during at-sea surveys. Data: Heithaus (2019)
+```{r}
+##creating a table that shows the counts from each response in correlation to the identified political affiliation 
+turtles_counts <- turtles_b %>% 
+  janitor::tabyl(species, burr) 
+
+turtles_table <- turtles_counts %>% 
+  adorn_percentages() %>% 
+   janitor::adorn_pct_formatting(digits = 2) %>% 
+  adorn_ns() %>% 
+  kable() %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)##finalize the graph format 
+
+turtles_table
+
+```
+```{r}
+##converting count table into contingency table so that I can perform a chi square test
+
+turtles_ct <- turtles_counts %>% 
+  column_to_rownames(var = "species")
+```
+
+```{r, include=FALSE}
+## to address the question- is there a significant association between species and occurrence of burrowing barnacles run a chi squared test to test the affiliation
+turtles_x2 <- chisq.test(turtles_ct)
+turtles_x2
+
+turtlesx2_tidy <- tidy(turtles_x2)
+
+turtlesx2_tidy
+```
+
+#### **Results**
+ The chi squared value from the two species of `r round(turtlesx2_tidy$statistic,1)` and a p value of `r format(turtlesx2_tidy$p.value, scientific = TRUE, digits = 3)`, p < 0.05 is sufficient evidence to reject the null hypothesis of independence between turtle species and presence of burrowing barnacle, showing that the variables are dependent on each other and turtle species will effect whether burrowing barnacle is observed an a trapped individual. 
+
+
