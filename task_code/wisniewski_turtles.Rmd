@@ -1,5 +1,5 @@
 ---
-title: "Sea Turtles in Shark Bay Data"
+title: "Examining the Relationship Between Physical Characteristics and Sea Turtle Species Captured During Surveys in Shark Bay, Australia (2008-2013)"
 author: "Jenna Wisniewski"
 date: "12/11/2020"
 output: html_document
@@ -27,15 +27,16 @@ turtles_data <- read_csv(here("exam_data","sharkbay_sea_turtles.csv"))
 #### **1. Explore the relationship between carapace length and width for green and loggerhead turtles**
 
 
-##### **Data Vizualization**
-```{r}
+##### **Data Visualization**
+```{r, fig.align = "center"}
 ## create an exploratory data visualization showing the relationship between carapace length and width 
 
 ggplot(data = turtles_data, aes(x=length, y = width)) +
   geom_point()+
-  labs(x = "Carapace Length(cm)", y = "Carapace Width (cm)", title = "Relationship Between Carapace Length and Width in Green and Loggerhead Turtles")
+  labs(x = "Carapace Length(cm)", y = "Carapace Width (cm)", title = "Carapace Length vs. Carapace Width in Green and Loggerhead Turtles")
 
 ```
+
 
 
 ##### **Analysis**
@@ -46,15 +47,18 @@ turtles_lm <- lm(length ~ width, data = turtles_data)
 
 ## check diagnostic plot to check assumptions
 plot(turtles_lm)
-## Data looks like it meets assumption, however might possibly violate linearity and could have outliers that are affecting the data.
+## Data looks like it meets assumption and it very linear, however could have outliers that are affecting the data.
 
 # Get tidy versions of the model output to call later on in text
 turtles_lm_tidy <- tidy(turtles_lm)
 
 turtles_lm_glance <- glance(turtles_lm)
+
 ```
 
- Simple linear regression revealed that carapace length strongly predicts carapace width in green and loggerhead turtles, with 93% of the variance in carapace width accounted for by carapace length p < 0.005, R^2^ = `r round(turtles_lm_glance$r.squared,2)`) with an average slope of $\beta$ = `r round(turtles_lm_tidy$estimate[2], 2)` cm (i.e., for each one centimeter increase in carapce length we expect an average increase in carapce width of `r round(turtles_lm_tidy$estimate[2], 2)` cm). Diagnostic plots (not included) reveal normally distributed and homoscedastic residuals. 
+Simple linear regression revealed that carapace length strongly predicts carapace width in green and loggerhead turtles, with 93% of the variance in carapace width accounted for by carapace length p < 0.005, R^2^ = `r round(turtles_lm_glance$r.squared,2)`) with an average slope of $\beta$ = `r round(turtles_lm_tidy$estimate[2], 2)` cm (i.e., for each one centimeter increase in carapce length we expect an average increase in carapce width of `r round(turtles_lm_tidy$estimate[2], 2)` cm). Diagnostic plots (not included) reveal normally distributed and homoscedastic residuals. 
+
+
 
 #### **2. Compare the carapace lengths between green and loggerhead turtles**
 ```{r}
@@ -76,8 +80,12 @@ green_l <- turtles_length %>%
   pull(length)
 
 ```
+
+
 ##### **Data Visualization: Exploratory Plots**
-```{r}
+
+
+```{r, fig.align = "center"}
 ## Create exploratory plots to explore the distribution of carapace lengths for green and loggerhead turtles 
 
 ##Plot data in exploratory graph 
@@ -91,8 +99,7 @@ qqnorm(green_l)## Looks relatively linear, possibly a bit skewed
 
 ##### **Analysis**
 
-To compare the lengths statistically, I choose a two sample t test. This is because
-
+To compare the lengths statistically, I choose a two-sample t test. This is because the data values are independent and appear to be normally distributed. While the data linearity could have some skew, the Central Limit Theorem states that the means from these populations will be normally distributed. This will be a good test to compare the means of a variable among two normally distributed populations.
 
 ```{r, include=FALSE}
 ##Use two sided t.test to compare the mean carapace lengths of loggerhead and green turtles
@@ -117,6 +124,7 @@ On average, green turtles have a longer carapace than loggerhead turtles. (`r ro
 
 
 #### **3. Comparing the Occurrence of burrowing barnacles on green vs. loggerhead turtles**
+
 ```{r}
 #### Data Organization
 
@@ -135,8 +143,8 @@ turtles_b <- turtles_data %>%
 ##### **Data Visualization**
 
 
-**Table 1.** Counts of green and loggerhead turtles that are observed with the presence of burrowing barnacles in Shark Bay Australia during at-sea surveys. Data: Heithaus (2019)
-```{r}
+**Table 1.** Counts of green and loggerhead turtles that are observed with the presence of burrowing barnacles in Shark Bay Australia during at-sea surveys from 2008-2013. Data: Heithaus (2019)
+```{r, fig.align = "center"}
 ##creating a table that shows the counts from each response in correlation to the identified political affiliation 
 turtles_counts <- turtles_b %>% 
   janitor::tabyl(species, burr) 
@@ -170,5 +178,8 @@ turtlesx2_tidy <- tidy(turtles_x2)
 turtlesx2_tidy
 ```
 
-The percentage and count of green turtles with observed burrowing barnacles was `r turtles_table[1,2]`, the percentage and count of loggerhead turtles with observed burrowing barnacles was `r turtles_table [2,2]`.  The chi squared value from the two species of `r round(turtlesx2_tidy$statistic,1)` and a p value of `r format(turtlesx2_tidy$p.value, scientific = TRUE, digits = 3)`, p < 0.05 is sufficient evidence to reject the null hypothesis of independence between turtle species and presence of burrowing barnacle, showing that the variables are dependent on each other and turtle species will effect whether burrowing barnacle is observed an a trapped individual. 
+The percentage and count of green turtles with observed burrowing barnacles was `r turtles_table[1,2]`, the percentage and count of loggerhead turtles with observed burrowing barnacles was `r turtles_table [2,2]`.  The chi squared value from the two species of `r round(turtlesx2_tidy$statistic,1)` and a p value of `r format(turtlesx2_tidy$p.value, scientific = TRUE, digits = 3)`, p < 0.05 is sufficient evidence to reject the null hypothesis of independence between turtle species and presence of burrowing barnacle, showing that the variables are dependent to each other and turtle species will effect whether burrowing barnacle is observed on a trapped individual. 
+
+##### **Citation**
+Heithaus, M. and J. Thomson. 2019. Marine turtles captured during haphazard at-sea surveys in Shark Bay, Australia from February 2008 to December 2013 ver 4. Environmental Data Initiative. https://doi.org/10.6073/pasta/7696e20214fbf84f25d664ff7dc8050c
 
